@@ -27,7 +27,7 @@ echo "${usersUUID}"
 #echo "${lastLogin}"
 #lastLogout=$(osqueryi --json --header=FALSE --list 'SELECT * FROM last')
 #echo "${lastLogout}"
-sipStatus=$(osqueryi 'SELECT enabled AS SIP_Status FROM sip_config WHERE config_flag="sip"')
+sipStatus=$(osqueryi --json --header=true --list 'SELECT enabled AS SIP_Status FROM sip_config WHERE config_flag="sip"')
 echo "${sipStatus}"
 anyUpdatesAvailable=$(osqueryi 'SELECT * FROM plist WHERE path = "/Library/Preferences/com.apple.commerce.plist" and key = "AutoUpdate"')
 echo "${anyUpdatesAvailable}"

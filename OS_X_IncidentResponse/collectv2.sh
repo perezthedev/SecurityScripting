@@ -41,9 +41,11 @@ block out all
 pass in proto tcp from $serverIP to any port 22
 EOF
 
-#load the pfconfig rule and inform the user there is no internet access
-pfctl -f $quarentineRule 2>/dev/null
-pfctl -e 2>/dev/null
+#load the pfconfig rule (-f means from given file) and inform the user there is no internet access
+# pfctl -- control the packet filter (PF) and network address translation (NAT) device
+pfctl -f $quarentineRule 2>/dev/null 
+pfctl -e 2>/dev/null #enable the packet filter
+
 if [ $? -eq 0 ]; then
 	echo "Quarantine Enabled. Internet access unavailable."
 fi
@@ -58,11 +60,10 @@ fi
 
 # create a .zip file of all the data in the current directory
 # Should ALWAYS be last thing we do. Do not add code below this line.
+# if you get error "ditto: Cannot get the real path for source 'collection'" 
+# make sure you 'mkdir collection' that contains the content
 
 echo "Archiving Data"
 cname=`scutil --get ComputerName | tr ' ' '_' | tr -d \'`
 now=`date +"_%Y-%m-%d"`
 ditto -k --zlibCompressionLevel 5 -c $IRfolder $cname$now.zip
-
-
-ditto: Cannot get the real path for source 'collection'

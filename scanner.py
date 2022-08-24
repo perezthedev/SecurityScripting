@@ -16,7 +16,7 @@ def scan(ip, port):
     # a bidirectional network communication link between a server-side 
     # and a client-side program
     scanner = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    scanner.settimeout(3) # wait one second on closed port, then check next port
+    scanner.settimeout(3) # wait three seconds on closed port, then check next port
 
     try:
         scanner.connect((ip, port)) # function that takes a tuple

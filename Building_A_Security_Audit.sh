@@ -11,6 +11,12 @@
 # DOCS:
 # anyUpdatesAvailable pList query -> https://github.com/osquery/osquery/issues/3666
 
+
+# run mutliple queries in osquery for system info, diplaying one line at a time
+# System Info: ComputerName, Serial Number, Model, MAC Address
+# User Info: List of Users, Users UUID, Last Login, Last Logout
+# Security Info: SIP Status, Updates Available, Uptime, Xprotect Identifier, Firewall Status, GateKeeper, Disk Encryption, USB Devices
+
 compName=$(osqueryi 'SELECT computer_name FROM system_info;')
 echo "${compName}"
 sysSerial=$(osqueryi 'SELECT hardware_serial FROM system_info')

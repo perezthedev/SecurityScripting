@@ -11,6 +11,12 @@
 # DOCS:
 # anyUpdatesAvailable pList query -> https://github.com/osquery/osquery/issues/3666
 
+# run endpoint security audit with a large query in osquery, condensing info
+# System Info: ComputerName, Serial Number, Model, MAC Address
+# User Info: List of Users, Users UUID, Last Login, Last Logout
+# Security Info: SIP Status, Updates Available, Uptime, Xprotect Identifier, Firewall Status, GateKeeper, Disk Encryption, USB Devices
+
+
 compName=$(osqueryi 'SELECT DISTINCT computer_name, hardware_serial, hardware_model, mac FROM system_info, interface_details;')
 echo "${compName}"
 

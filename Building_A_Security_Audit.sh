@@ -1,22 +1,23 @@
 #!/bin/sh
 
+# created by PerezTheDev
+
+# run endpoint security audit with queries in osquery, displaying one line at a time
+# System Info: ComputerName, Serial Number, Model, MAC Address
+# User Info: List of Users, Users UUID, Last Login, Last Logout
+# Security Info: SIP Status, Updates Available, Uptime, Xprotect Identifier, Firewall Status, GateKeeper, Disk Encryption, USB Devices
+
+# explain flags
 # --json -  -  -   -> Set output mode to 'json'
 # --header -  -  - -> Toggle column headers true/false
 # --list -  -  -   -> Set output mode to 'list'
-# $ -  -  -  -  -  -> means variable will be input for command line
 # var=$(osqueryi --json_pretty --header=FALSE --list '')
-# echo $var  -  -  -> prints single line output
-# echo "${var}"-> prints multiline output (includes whitespaces)
 
 # DOCS:
 # anyUpdatesAvailable pList query -> https://github.com/osquery/osquery/issues/3666
 
 
-# run mutliple queries in osquery for system info, diplaying one line at a time
-# System Info: ComputerName, Serial Number, Model, MAC Address
-# User Info: List of Users, Users UUID, Last Login, Last Logout
-# Security Info: SIP Status, Updates Available, Uptime, Xprotect Identifier, Firewall Status, GateKeeper, Disk Encryption, USB Devices
-
+echo "----------SYSTEM INFO----------"
 compName=$(osqueryi 'SELECT computer_name FROM system_info;')
 echo "${compName}"
 sysSerial=$(osqueryi 'SELECT hardware_serial FROM system_info')
@@ -26,6 +27,7 @@ echo "${sysModel}"
 macAddress=$(osqueryi 'SELECT mac AS MAC_address FROM interface_details')
 echo "${macAddress}"
 
+echo "----------USER INFO----------"
 listOfUsers=$(osqueryi 'SELECT DISTINCT user AS Users FROM logged_in_users')
 echo "${listOfUsers}"
 usersUUID=$(osqueryi 'SELECT uuid AS UUID FROM users')
@@ -35,6 +37,8 @@ echo "${usersUUID}"
 #lastLogout=$(osqueryi --json --header=FALSE --list 'SELECT * FROM last')
 #echo "${lastLogout}"
 
+
+echo "----------SECURITY INFO----------"
 sipStatus=$(osqueryi --json --header=false --list 'SELECT enabled AS SIP_Status FROM sip_config WHERE config_flag="sip"')
 # make System Integrity Protection status more human readable
 if [ "${sipStatus}" == 1 ]

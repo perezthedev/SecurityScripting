@@ -1,5 +1,7 @@
 #! /bin/bash
 
+#GOAL: unveil any type of persistence the attacker might have left behind on the system.
+
 echo "Collecting system ASEPS"
 # the $IRFolder variable was assigned in our original script
 ASEPS=$IRFolder/aseps

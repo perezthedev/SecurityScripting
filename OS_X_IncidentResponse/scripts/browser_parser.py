@@ -67,4 +67,108 @@ def parseChromeHistory(histFile):
     c = conn.cursor()
     query = """
         SELECT
-            strftime
+            strftime('%Y-%m-%dT%H:%M:%S', (v.visit_time/1000000)-11644473600, 'unixepoch'), u.url
+        FROM
+            visits v
+        INNER JOIN
+            urls u ON u.id = v.url;"""
+        
+    for dt, url in c.execute(query):
+        string = "%s, chrome_history, %s\n" % (dt, url)
+        printToFile(string)
+        
+    query = """
+        SELECT
+            strftime('%Y-%m-%dT%H:%M:%S', (d.start_time/1000000)-11644473600, 'unixepoch'),
+            dc.url,
+            d.target_path,
+            d.danger_type,
+            d.opened
+        FROM
+            downloads d
+        INNER JOIN
+            downloads_url_chains dc ON dc.id = d.id;"""
+        for dt, referrer, target, danger_type, opened in c.execute(query):
+            string = "%s, chrome_download, %s, %s, danger_type:%s\n" &\% (dt, referrer, target, dt_lookup[danger_type], opened)
+            printToFile(string)
+            
+    def parseOperaHistory(histFile):
+        print("Parsing Opera")
+        conn = sqlite3.connect(histFile)
+        c = conn.cursor()
+        query = """
+            SELECT
+                strftime('%Y-%m-%dT%H:%M:%S', (v.visit_time/1000000)-11644473600, 'unixepoch'), u.url, u.title
+            FROM
+                visits v
+            INNER JOIN
+                urls u ON u.id = v.url;"""
+        for row in c.execute(query):
+            string = "%s, opera_history, %s\n" % (row[0], row[1])
+            printToFile(string)
+            
+        # parse Opera downloads
+        query = """
+            SELECT
+                strftime('%Y-%m-%dT%H:%M:%S', (d.start_time/1000000)-11644473600, 'unixepoch'), dc.url, d.target_path, d.danger_type, d.opened
+            FROM
+                downloads d
+            INNER JOIN
+                downloads_url_chains dc ON dc.id = d.id;"""
+        for row in c.execute(query):
+            string = "%s, opera_download, %s, %s, danger_type:%s, opened:%s\n" % (row[0], row[1], row[2], dt_lookup[row[3]], row[4])
+            printToFile(string)
+    
+    def parseFirefoxHistory(histFile):
+        print("Parsing Firefox")
+        conn = sqlite3.connect(histFile)
+        c = conn.cursor()
+        query = """
+            SELECT
+                strftime('%Y-%m-%dT%H:%M:%S', hv.visit_time/1000000, 'unixepoch') as dt, p.url
+            FROM
+                moz_historyvisits hv
+            INNER JOIN
+                moz_places p ON hv.place_id = p.id
+                ORDER by dt ASC;"""
+                
+        for dt, url in c.execute(query):
+            string = "%s, firefox_history, %s\n" % (dt, url)
+            printToFile(string)
+            
+        # Firefox parse firefox downloads
+        query = """
+            SELECT
+                strftime('%Y-%m-%dT%H:%M:%S', a.dateAdded/1000000, 'unixepoch') as dt, a.content, p.url
+            FROM
+                moz_annos a
+            INNER JOIN
+                moz_places p ON p.id = a.place.id
+            WHERE
+                a.anno_attribute_id = 6
+            ORDER BY dt ASC;"""
+            
+        for dt, content, url in c.execute(query):
+            string = "%s, firefox_download, %s, %s\n" % (dt, content, url)
+            printToFile(atring)
+            
+if __name__ == '__main__':
+    print("Parsing Browser History...")
+
+    safariDBFound = False
+    for filename in glob.glob('browserHistory/*.db'):
+        if filename.endswith('chromeHistory.db'):
+            parseChromeHistory(filename)
+        elif filename.endswith('firefoxHistory.db'):
+            parseFirefoxHistory(filename
+        elif filename.endswith('operaHistory.db'):
+            parseOperaHistory(filename)
+        elif filename.endswith('safariHistory.db'):
+            parseSafariHistory(filename)
+            safariDBFound = True
+            
+    for filename in glob.glob('browswerHistory/*.plist'):
+        if filename.endswith('safariHistory.plist') and safariDBFound == False:
+            parseSafariHistoryplist(filename)
+        elif filename.endswith('safariDownloads.plist'):
+            parseSafariDownloadsplist(filename)

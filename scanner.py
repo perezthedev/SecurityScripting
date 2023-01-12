@@ -28,5 +28,5 @@ def scan(ip, port):
 
 # Threads
 with concurrent.futures.ThreadPoolExecutor() as executor:
-        for port in range(999):
+        for port in range(65536):
             executor.submit(scan, ip, port + 1) # port 0 does not exist

@@ -2,11 +2,25 @@
 
 # networkCaptureGivenIPv02.sh - networkCaptureGivenIPwFlags.sh
 
+####################################################################
 # DESCRIPTION: a bash script that captures network packets 
 #              for a specified IP address on a specified 
 #              network interface and saves the packets to a file
 #              using the -i (interface) and -t (target IP)
+####################################################################
 
+####################################################################
+# The getopts command takes two main arguments: 
+# the option string and the name of a variable to store the currently parsed option
+#
+#  option string: contains all the valid options that the script accepts
+#                 Each option is represented by a single character, 
+#                 optionally followed by a colon (:) to indicate that 
+#                 the option requires an argument. 
+#
+#                 For example, "t:i:" represents two options: 
+#                             -t (target IP) and -i (interface)
+####################################################################
 
 # Default settings
 target_ip="10.0.0.1"
